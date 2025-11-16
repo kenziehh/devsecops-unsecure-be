@@ -40,7 +40,7 @@ COPY --from=builder /app/docs ./docs
 COPY .env .env
 
 # Expose app port (defined in .env, fallback to 8080)
-EXPOSE 8080
+EXPOSE 8081
 
 # Use env file and run the binary
 CMD ["sh", "-c", "source .env && ./main"]

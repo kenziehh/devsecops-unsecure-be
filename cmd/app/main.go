@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/kenziehh/cashflow-be/config"
 	"github.com/kenziehh/cashflow-be/database/seed"
@@ -32,7 +33,7 @@ import (
 // @title Cash Flow API
 // @version 1.0
 // @description API untuk Website Cash Flow
-// @host localhost:8080
+// @host localhost:8081
 // @BasePath /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
@@ -77,6 +78,12 @@ func main() {
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 	}))
 
+	// Custom rate limiters
+	loginLimiter := middleware.RateLimiter(redis, 15, 1*time.Minute)     // 5 request / menit
+	generalLimiter := middleware.RateLimiter(redis, 100, 1*time.Minute) // global
+	app.Use(generalLimiter)
+
+	
 	// Swagger
 	app.Get("/docs/*", swagger.HandlerDefault)
 
@@ -90,7 +97,7 @@ func main() {
 
 	auth := api.Group("/auth")
 	auth.Post("/register", authHandler.Register)
-	auth.Post("/login", authHandler.Login)
+	auth.Post("/login", loginLimiter, authHandler.Login)
 	auth.Post("/logout", middleware.JWTAuth(), authHandler.Logout)
 	auth.Get("/me", middleware.JWTAuth(), authHandler.GetProfile)
 
@@ -125,7 +132,7 @@ func main() {
 	// Start server
 	port := os.Getenv("APP_PORT")
 	if port == "" {
-		port = "8080"
+		port = "8081"
 	}
 
 	log.Printf("Server running on port %s", port)

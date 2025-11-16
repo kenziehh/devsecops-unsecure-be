@@ -44,3 +44,6 @@ docs/swagger.json
 docs/swagger.yaml
 
 uploads/
+
+sonar-project.properties
+.scannerwork/

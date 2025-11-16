@@ -28,9 +28,7 @@ func NewMaximumSpendHandler(svc service.MaximumSpendService) *MaximumSpendHandle
 // @Produce json
 // @Param request body dto.MaximumSpendRequest true "Maximum Spend Request"
 // @Success 200 {object} dto.MaximumSpendResponse
-// @Failure 400 {object} fiber.Map
-// @Failure 401 {object} fiber.Map
-// @Failure 500 {object} fiber.Map
+
 // @Router /maximum-spends [post]
 func (h *MaximumSpendHandler) SetMaximumSpend(c *fiber.Ctx) error {
 	var req dto.MaximumSpendRequest
@@ -85,9 +83,7 @@ func (h *MaximumSpendHandler) SetMaximumSpend(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Success 200 {object} dto.MaximumSpendResponse
-// @Failure 401 {object} fiber.Map
-// @Failure 404 {object} fiber.Map
-// @Failure 500 {object} fiber.Map
+
 // @Router /maximum-spends [get]
 func (h *MaximumSpendHandler) GetMaximumSpend(c *fiber.Ctx) error {
 	userIDStr := c.Locals("user_id")

@@ -121,7 +121,7 @@ func (h *TransactionHandler) GetTransactionByID(c *fiber.Ctx) error {
 	if !ok {
 		return errx.NewUnauthorizedError("Invalid user ID")
 	}
-
+	
 	idParam := c.Params("id")
 	if strings.TrimSpace(idParam) == "" {
 		return errx.NewBadRequestError("Transaction ID is required")
@@ -137,11 +137,10 @@ func (h *TransactionHandler) GetTransactionByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	fmt.Println(userID)
+	if result.UserID != userID {
+		return errx.NewUnauthorizedError("You do not have access to this transaction")
+	}
 
-	// if result.UserID != userID {
-	// 	return errx.NewUnauthorizedError("You do not have access to this transaction")
-	// }
 
 	return c.JSON(response.SuccessResponse("Transaction retrieved successfully", result))
 }
@@ -355,26 +354,20 @@ func (h *TransactionHandler) GetProofFile(c *fiber.Ctx) error {
 		return errx.NewNotFoundError("Transaction not found")
 	}
 
-	fmt.Println(userID)
-
-	// // Ownership check
-	// if tx.UserID != userID {
-	// 	return errx.NewUnauthorizedError("You do not have access to this transaction")
-	// }
+	if tx.UserID != userID {
+		return errx.NewUnauthorizedError("You do not have access to this transaction")
+	}
 
 	if tx.ProofFile == "" {
 		return errx.NewNotFoundError("No proof file")
 	}
 
-	// safe join (and make sure proof file stored as filename only, not path)
 	safePath := filepath.Join("uploads", "proofs", filepath.Base(tx.ProofFile))
 
-	// Optional: check file exists
 	if _, err := os.Stat(safePath); os.IsNotExist(err) {
 		return errx.NewNotFoundError("File not found")
 	}
 
-	// Let Fiber serve the file with correct headers
 	return c.SendFile(safePath, true)
 }
 
