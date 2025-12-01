@@ -27,7 +27,7 @@ services:
     ports:
       - "${DB_PORT:-5442}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - unsecure_postgres_data:/var/lib/postgresql/data
       - ./database/migrations/:/docker-entrypoint-initdb.d/
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}" ]
@@ -44,7 +44,7 @@ services:
     ports:
       - "${REDIS_PORT:-6389}:6379"
     volumes:
-      - redis_data:/data
+      - unsecure_redis_data:/data
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
