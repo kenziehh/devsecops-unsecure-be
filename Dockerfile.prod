@@ -35,6 +35,9 @@ WORKDIR /app
 COPY --from=builder /app/main .
 COPY --from=builder /app/docs ./docs
 
+# 👉 Copy migrations as well
+COPY --from=builder /app/database/migrations ./database/migrations
+
 # Expose app port (defined in .env, fallback to 8080)
 EXPOSE 8080
 
