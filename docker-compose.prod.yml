@@ -1,11 +1,9 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
-    container_name: cashflow_be_secure
+    image: unsecure-cashflow-be-prod
+    container_name: unsecure-cashflow-be-prod
     ports:
-      - "${APP_PORT:-8081}:${APP_PORT:-8081}"
+      - "${APP_PORT:-8090}:8080"
     env_file:
       - .env
     depends_on:
@@ -14,16 +12,20 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - app_network
+      - unsecure_app_network
     restart: unless-stopped
 
   postgres:
     image: postgres:15-alpine
-    container_name: cashflow_db_secure
+    container_name: unsecure-cashflow-db-prod
     env_file:
       - .env
+    environment:
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-password}
+      - POSTGRES_DB=${DB_NAME:-cashflow_db}
     ports:
-      - "${DB_PORT:-5433}:5432"
+      - "${DB_PORT:-5442}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/migrations/:/docker-entrypoint-initdb.d/
@@ -33,14 +35,14 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - app_network
+      - unsecure_app_network
     restart: unless-stopped
 
   redis:
     image: redis:7-alpine
-    container_name: redis_cashflow
+    container_name: unsecure-redis-cashflow-prod
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "${REDIS_PORT:-6389}:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -49,13 +51,13 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - app_network
+      - unsecure_app_network
     restart: unless-stopped
 
 networks:
-  app_network:
+  unsecure_app_network:
     driver: bridge
 
 volumes:
-  postgres_data:
-  redis_data:
+  unsecure_postgres_data:
+  unsecure_redis_data:
