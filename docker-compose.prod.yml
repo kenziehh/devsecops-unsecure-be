@@ -1,6 +1,6 @@
 services:
   app:
-    image: unsecure-cashflow-be-prod
+    image: unsecure-cashflow-be-app
     container_name: unsecure-cashflow-be-prod
     ports:
       - "${APP_PORT:-8090}:8080"
