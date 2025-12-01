@@ -24,8 +24,6 @@ services:
       - POSTGRES_USER=${DB_USER:-postgres}
       - POSTGRES_PASSWORD=${DB_PASSWORD:-password}
       - POSTGRES_DB=${DB_NAME:-cashflow_db}
-    ports:
-      - "${DB_PORT:-5442}:5432"
     volumes:
       - unsecure_postgres_data:/var/lib/postgresql/data
       - ./database/migrations/:/docker-entrypoint-initdb.d/
@@ -41,8 +39,6 @@ services:
   redis:
     image: redis:7-alpine
     container_name: unsecure-redis-cashflow-prod
-    ports:
-      - "${REDIS_PORT:-6389}:6379"
     volumes:
       - unsecure_redis_data:/data
     healthcheck:
