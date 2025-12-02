@@ -83,7 +83,7 @@ pipeline {
                     echo "🚀 Deploying to staging..."
                     sh """
                         # Staging environment variables
-                        cat > .env.staging <<EOF
+                        cat > .env <<EOF
 APP_PORT=${STAGING_APP_PORT}
 DB_HOST=postgres
 DB_PORT=${CONTAINER_DB_PORT}
@@ -111,10 +111,10 @@ services:
 EOF
 
                         # Stop existing staging and remove volumes (to reset DB password)
-                        docker compose -p staging -f docker-compose.prod.yml -f docker-compose.staging.yml --env-file .env.staging down -v 2>/dev/null || true
+                        docker compose -p staging -f docker-compose.prod.yml -f docker-compose.staging.yml --env-file .env down -v 2>/dev/null || true
 
                         # Deploy staging
-                        docker compose -p staging -f docker-compose.prod.yml -f docker-compose.staging.yml --env-file .env.staging up -d
+                        docker compose -p staging -f docker-compose.prod.yml -f docker-compose.staging.yml --env-file .env up -d
 
                         # Wait for services
                         echo "⏳ Waiting for services..."
@@ -161,7 +161,7 @@ EOF
                           --network staging_unsecure_app_network \\
                           -v \$(pwd):/zap/wrk \\
                           -t zaproxy/zap-stable zap-api-scan.py \\
-                          -t http://cashflow-be-staging:${STAGING_APP_PORT} \\
+                          -t http://unsecure-cashflow-be-staging:${STAGING_APP_PORT} \\
                           -f openapi \\
                           -r zap-report.html \\
                           -w zap-report.md \\

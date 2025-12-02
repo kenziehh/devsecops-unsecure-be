@@ -3,7 +3,7 @@ services:
     image: unsecure-cashflow-be-app
     container_name: unsecure-cashflow-be-prod
     ports:
-      - "${APP_PORT:-8090}:8080"
+      - "${APP_PORT:-8090}:8090"
     env_file:
       - .env
     depends_on:
